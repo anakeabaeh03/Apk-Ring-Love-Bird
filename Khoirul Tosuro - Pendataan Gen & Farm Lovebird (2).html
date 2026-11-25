@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#059669" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Khoirul Tosuro" />
+  <title>Khoirul Tosuro - Pendataan Gen & Farm Lovebird</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f1f5f9;
+      color: #0f172a;
+      -webkit-tap-highlight-color: transparent;
+      overscroll-behavior-y: contain;
+    }
+
+    /* Custom Scrollbar untuk filter horizontal */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Animasi transisi halus */
+    .fade-in {
+      animation: fadeIn 0.22s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Safe area padding untuk Android/iOS */
+    .pb-safe {
+      padding-bottom: env(safe-area-inset-bottom, 16px);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col select-none">
+
+  <!-- ===================================================================== -->
+  <!-- TOP APP BAR (ANDROID MATERIAL STYLE)                                  -->
+  <!-- ===================================================================== -->
+  <header class="sticky top-0 z-30 bg-gradient-to-r from-emerald-700 via-emerald-600 to-teal-600 text-white shadow-md">
+    <div class="max-w-xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
+      <!-- Logo & Nama Aplikasi -->
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-10 h-10 rounded-2xl bg-white/15 backdrop-blur-sm border border-white/25 flex items-center justify-center shrink-0 shadow-inner">
+          <!-- Ikon Burung Lovebird & DNA -->
+          <svg class="w-6 h-6 text-amber-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c-2.5 0-4.5 1.8-4.5 4.2 0 1.2.5 2.3 1.3 3.1L6 15l3.5 1.5L11 21l2.5-3.5L17 16l-2.3-5.2c.8-.8 1.3-1.9 1.3-3.1C16 4.8 14.5 3 12 3z" />
+            <circle cx="10.5" cy="6.8" r="0.8" fill="currentColor" />
+            <path stroke-linecap="round" d="M15.5 6.5l2.5.8-2 1.2" />
+          </svg>
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-1.5">
+            <h1 class="font-extrabold text-base sm:text-lg tracking-tight truncate">Khoirul Tosuro</h1>
+            <span id="dbStatusBadge" class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-emerald-950/40 text-emerald-100 border border-emerald-400/30">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse"></span>
+              DB Aktif
+            </span>
+          </div>
+          <p class="text-[11px] text-emerald-100/90 truncate">Pendataan Gen, Ring & Transaksi Lovebird</p>
+        </div>
+      </div>
+
+      <!-- Tombol Install PWA -->
+      <button
+        id="btnInstallApp"
+        onclick="triggerInstallPWA()"
+        class="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 active:scale-95 text-slate-900 font-extrabold text-xs shadow-sm transition"
+        title="Pasang Aplikasi ke Layar Utama Android"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V3" />
+        </svg>
+        <span>Install</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===================================================================== -->
+  <!-- KONTEN UTAMA (3 TAB)                                                  -->
+  <!-- ===================================================================== -->
+  <main class="flex-1 max-w-xl w-full mx-auto px-4 pt-4 pb-28">
+
+    <!-- =================================================================== -->
+    <!-- TAB 1: DATA BURUNG                                                  -->
+    <!-- =================================================================== -->
+    <section id="tab-list" class="space-y-4 fade-in">
+      <!-- Ringkasan Statistik Cepat -->
+      <div class="grid grid-cols-4 gap-2">
+        <div class="bg-white rounded-2xl p-2.5 border border-slate-200/80 shadow-xs text-center">
+          <div id="statTotal" class="text-lg font-extrabold text-slate-800 leading-none">0</div>
+          <div class="text-[10px] font-semibold text-slate-500 mt-1">Total</div>
+        </div>
+        <div class="bg-white rounded-2xl p-2.5 border border-emerald-200/80 shadow-xs text-center">
+          <div id="statReady" class="text-lg font-extrabold text-emerald-600 leading-none">0</div>
+          <div class="text-[10px] font-semibold text-slate-500 mt-1">Ready/Rawat</div>
+        </div>
+        <div class="bg-white rounded-2xl p-2.5 border border-indigo-200/80 shadow-xs text-center">
+          <div id="statIndukan" class="text-lg font-extrabold text-indigo-600 leading-none">0</div>
+          <div class="text-[10px] font-semibold text-slate-500 mt-1">Indukan</div>
+        </div>
+        <div class="bg-white rounded-2xl p-2.5 border border-rose-200/80 shadow-xs text-center">
+          <div id="statSold" class="text-lg font-extrabold text-rose-600 leading-none">0</div>
+          <div class="text-[10px] font-semibold text-slate-500 mt-1">Sold Out</div>
+        </div>
+      </div>
+
+      <!-- Kolom Pencarian Cepat -->
+      <div class="relative">
+        <span class="absolute inset-y-0 left-3.5 flex items-center text-slate-400 pointer-events-none">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </span>
+        <input
+          type="text"
+          id="searchInput"
+          oninput="renderBirdList()"
+          placeholder="Cari visual, no ring, warna ring, atau indukan..."
+          class="w-full pl-10 pr-9 py-2.5 bg-white border border-slate-200 rounded-xl text-sm shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
+        />
+        <button
+          id="btnClearSearch"
+          onclick="clearSearch()"
+          class="hidden absolute inset-y-0 right-2.5 items-center text-slate-400 hover:text-slate-600 p-1"
+          title="Hapus pencarian"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Filter Status Horizontal -->
+      <div id="statusFilterBar" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+        <button onclick="setStatusFilter('Semua')" data-filter="Semua" class="filter-chip active px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap bg-emerald-600 text-white shadow-xs transition">
+          Semua
+        </button>
+        <button onclick="setStatusFilter('Indukan')" data-filter="Indukan" class="filter-chip px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition">
+          Indukan
+        </button>
+        <button onclick="setStatusFilter('Anakan/Rawatan')" data-filter="Anakan/Rawatan" class="filter-chip px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition">
+          Anakan/Rawatan
+        </button>
+        <button onclick="setStatusFilter('Siap Jual')" data-filter="Siap Jual" class="filter-chip px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition">
+          Siap Jual
+        </button>
+        <button onclick="setStatusFilter('Sold Out')" data-filter="Sold Out" class="filter-chip px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition">
+          Sold Out
+        </button>
+      </div>
+
+      <!-- Daftar Kartu Burung -->
+      <div id="birdListContainer" class="space-y-3"></div>
+
+      <!-- State Kosong -->
+      <div id="emptyState" class="hidden bg-white rounded-3xl p-8 text-center border border-dashed border-slate-300 space-y-3">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="font-extrabold text-slate-800 text-sm">Belum Ada Data Burung</h3>
+          <p class="text-xs text-slate-500 mt-1">Tambahkan data gen Lovebird baru atau pulihkan dari file backup Google Drive.</p>
+        </div>
+        <button onclick="openNewFormTab()" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm transition">
+          + Tambah Data Burung
+        </button>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- TAB 2: FORM TAMBAH / EDIT BURUNG                                    -->
+    <!-- =================================================================== -->
+    <section id="tab-form" class="hidden fade-in">
+      <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden">
+        <!-- Header Form -->
+        <div class="px-5 py-4 bg-slate-50 border-b border-slate-200/80 flex items-center justify-between">
+          <div>
+            <h2 id="formHeading" class="font-extrabold text-base text-slate-800">Tambah Data Lovebird</h2>
+            <p class="text-[11px] text-slate-500">Isi visual, foto, data indukan, ring, dan status</p>
+          </div>
+          <button
+            type="button"
+            onclick="resetFormToNew()"
+            class="px-3 py-1.5 rounded-xl bg-slate-200/70 hover:bg-slate-200 text-slate-700 font-bold text-xs transition"
+          >
+            Reset Form
+          </button>
+        </div>
+
+        <form id="birdForm" onsubmit="handleFormSubmit(event)" class="p-5 space-y-4">
+          <input type="hidden" id="birdId" value="" />
+
+          <!-- 1. Nama Visual -->
+          <div>
+            <label for="visualName" class="block text-xs font-bold text-slate-700 mb-1">
+              Nama Visual <span class="text-rose-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="visualName"
+              required
+              placeholder="Contoh: Lutino MM, Violet Parblue, Biola Green"
+              class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition"
+            />
+          </div>
+
+          <!-- 2. Foto Burung (Kamera / Galeri + Kompresi Otomatis) -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Foto Burung</label>
+            <div class="p-3 bg-slate-50 border border-dashed border-slate-300 rounded-2xl">
+              <div id="photoPreviewWrapper" class="hidden mb-3 relative">
+                <img id="photoPreviewImg" src="" alt="Preview Foto Burung" class="w-full h-48 object-cover rounded-xl border border-slate-200 bg-slate-200" />
+                <button
+                  type="button"
+                  onclick="removeSelectedPhoto()"
+                  class="absolute top-2 right-2 px-2.5 py-1 rounded-lg bg-rose-600/90 hover:bg-rose-700 text-white text-[11px] font-bold shadow-sm flex items-center gap-1"
+                >
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  Hapus Foto
+                </button>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2">
+                <!-- Tombol Kamera Langsung -->
+                <label class="cursor-pointer flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-bold text-xs shadow-xs transition">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h2l2-2h6l2 2h2a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <circle cx="12" cy="13" r="3" />
+                  </svg>
+                  <span>Kamera HP</span>
+                  <input type="file" accept="image/*" capture="environment" onchange="handlePhotoUpload(event)" class="hidden" />
+                </label>
+
+                <!-- Tombol Pilih Galeri -->
+                <label class="cursor-pointer flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold text-xs transition">
+                  <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <span>Pilih Galeri</span>
+                  <input type="file" accept="image/*" onchange="handlePhotoUpload(event)" class="hidden" />
+                </label>
+              </div>
+              <p class="text-[10px] text-slate-500 text-center mt-2">Foto otomatis dikompresi ringan agar database & backup Google Drive tetap cepat.</p>
+            </div>
+          </div>
+
+          <!-- 3. Data Indukan Jantan & Betina -->
+          <div class="p-3.5 rounded-2xl bg-indigo-50/60 border border-indigo-100 space-y-3">
+            <div class="flex items-center gap-1.5 text-xs font-extrabold text-indigo-900">
+              <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <span>Data Silsilah & Gen Indukan</span>
+            </div>
+
+            <div>
+              <label for="sireInfo" class="block text-xs font-bold text-slate-700 mb-1">
+                Indukan Jantan (♂) & Gen/Split
+              </label>
+              <input
+                type="text"
+                id="sireInfo"
+                placeholder="Contoh: Biola Blue Split PB / Ring KT-01"
+                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+              />
+            </div>
+
+            <div>
+              <label for="damInfo" class="block text-xs font-bold text-slate-700 mb-1">
+                Indukan Betina (♀) & Gen/Split
+              </label>
+              <input
+                type="text"
+                id="damInfo"
+                placeholder="Contoh: Parblue Euwing / Ring KT-02"
+                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+              />
+            </div>
+          </div>
+
+          <!-- 4. Nomor Ring & Warna Ring -->
+          <div class="space-y-3">
+            <div>
+              <label for="ringNumber" class="block text-xs font-bold text-slate-700 mb-1">
+                Nomor Ring
+              </label>
+              <input
+                type="text"
+                id="ringNumber"
+                placeholder="Contoh: KT 012 / 2026"
+                class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-mono uppercase focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition"
+              />
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1.5">Warna Ring</label>
+              <input type="hidden" id="ringColor" value="Merah" />
+              <div id="ringColorPalette" class="grid grid-cols-4 gap-2"></div>
+            </div>
+          </div>
+
+          <!-- 5. Status Burung -->
+          <div>
+            <label for="status" class="block text-xs font-bold text-slate-700 mb-1">Status Burung</label>
+            <select
+              id="status"
+              onchange="toggleSoldOutFields()"
+              class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition"
+            >
+              <option value="Anakan/Rawatan">Anakan/Rawatan</option>
+              <option value="Siap Jual">Siap Jual</option>
+              <option value="Indukan">Indukan</option>
+              <option value="Sold Out">Sold Out</option>
+            </select>
+          </div>
+
+          <!-- 6. Field Kondisional: Tanggal Sold Out & No HP Pembeli -->
+          <div id="soldOutFields" class="hidden p-3.5 rounded-2xl bg-rose-50 border border-rose-200 space-y-3 fade-in">
+            <div class="text-xs font-extrabold text-rose-800 flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>Detail Transaksi Sold Out</span>
+            </div>
+
+            <div>
+              <label for="soldOutDate" class="block text-xs font-bold text-slate-700 mb-1">Tanggal Sold Out</label>
+              <input
+                type="date"
+                id="soldOutDate"
+                class="w-full px-3.5 py-2.5 bg-white border border-rose-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500"
+              />
+            </div>
+
+            <div>
+              <label for="buyerPhone" class="block text-xs font-bold text-slate-700 mb-1">Nomor HP Pembeli (WhatsApp)</label>
+              <input
+                type="tel"
+                id="buyerPhone"
+                placeholder="Contoh: 081234567890"
+                class="w-full px-3.5 py-2.5 bg-white border border-rose-300 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-rose-500"
+              />
+              <p class="text-[10px] text-slate-500 mt-1">Format 08... atau 628... otomatis terhubung ke tombol chat WhatsApp.</p>
+            </div>
+          </div>
+
+          <!-- Tombol Simpan -->
+          <div class="pt-2 flex items-center gap-2.5">
+            <button
+              type="button"
+              onclick="switchTab('list')"
+              class="w-1/3 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              class="w-2/3 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-extrabold text-sm shadow-md shadow-emerald-600/20 transition"
+            >
+              Simpan Data Burung
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- TAB 3: GOOGLE DRIVE & BACKUP DATABASE                               -->
+    <!-- =================================================================== -->
+    <section id="tab-drive" class="hidden space-y-4 fade-in">
+      <!-- Kartu Backup & Share Langsung ke Google Drive -->
+      <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/80 space-y-4">
+        <div class="flex items-start gap-3">
+          <div class="w-11 h-11 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
+            <!-- Ikon Google Drive -->
+            <svg class="w-6 h-6" viewBox="0 0 87.3 78">
+              <path fill="#0066da" d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z"/>
+              <path fill="#00ac47" d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0 -1.2 4.5h27.5z"/>
+              <path fill="#ea4335" d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z"/>
+              <path fill="#00832d" d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z"/>
+              <path fill="#2684fc" d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z"/>
+              <path fill="#ffba00" d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="font-extrabold text-base text-slate-800">Backup & Restore Google Drive</h2>
+            <p class="text-xs text-slate-500 mt-0.5 leading-relaxed">
+              Simpan seluruh data gen, foto burung, dan riwayat transaksi ke Google Drive agar aman saat ganti HP.
+            </p>
+          </div>
+        </div>
+
+        <!-- Status Backup Terakhir -->
+        <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between text-xs">
+          <span class="text-slate-500 font-medium">Backup Terakhir:</span>
+          <span id="lastBackupText" class="font-bold text-slate-800">Belum pernah backup</span>
+        </div>
+
+        <!-- Tombol Export / Share ke Google Drive -->
+        <button
+          onclick="exportAndShareBackup()"
+          class="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-98 text-white font-extrabold text-sm shadow-sm flex items-center justify-center gap-2 transition"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+          </svg>
+          <span>Export / Simpan ke Google Drive</span>
+        </button>
+
+        <!-- Tombol Restore / Impor File JSON -->
+        <div class="pt-1 border-t border-slate-100 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-700">Mode Restore File Backup:</span>
+            <select id="restoreMode" class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-300 text-xs font-bold text-slate-700">
+              <option value="merge">Gabungkan Data (Aman)</option>
+              <option value="replace">Timpa Semua Data</option>
+            </select>
+          </div>
+
+          <label class="cursor-pointer w-full py-2.5 px-4 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 font-bold text-xs flex items-center justify-center gap-2 transition">
+            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            <span>Restore dari File Backup (.json)</span>
+            <input type="file" accept=".json,application/json" onchange="handleImportBackup(event)" class="hidden" />
+          </label>
+        </div>
+      </div>
+
+      <!-- Kartu Sinkronisasi Langsung Google Drive API (Opsional OAuth) -->
+      <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/80 space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="font-extrabold text-sm text-slate-800">Sinkronisasi Langsung API (Opsional)</h3>
+          <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold">OAuth 2.0</span>
+        </div>
+        <p class="text-xs text-slate-500 leading-relaxed">
+          Jika Anda memiliki <strong>Google OAuth Client ID</strong> (Web Application), masukkan di bawah untuk mengunggah langsung ke Google Drive tanpa mengunduh file manual.
+        </p>
+
+        <div class="space-y-2">
+          <input
+            type="text"
+            id="googleClientIdInput"
+            placeholder="xxxx-xxxx.apps.googleusercontent.com"
+            class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <div class="grid grid-cols-2 gap-2">
+            <button
+              onclick="saveGoogleClientId()"
+              class="py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs transition"
+            >
+              Simpan Client ID
+            </button>
+            <button
+              onclick="syncDirectGoogleDrive()"
+              class="py-2 px-3 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 font-bold text-xs transition"
+            >
+              Login & Sync Drive
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kartu Pengelolaan Data Lokal & Tentang Aplikasi -->
+      <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/80 space-y-3">
+        <div class="text-center space-y-1">
+          <div class="font-extrabold text-sm text-slate-800">Khoirul Tosuro &bull; Lovebird Farm Manager</div>
+          <p class="text-xs text-slate-500 leading-relaxed">
+            Aplikasi pencatatan genetika, nomor & warna ring, foto burung, serta transaksi Lovebird berbasis database lokal IndexedDB & Google Drive.
+          </p>
+        </div>
+
+        <div class="pt-2 border-t border-slate-100 flex items-center justify-center gap-2">
+          <button
+            onclick="loadSampleData(true)"
+            class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] transition"
+          >
+            Muat Data Contoh
+          </button>
+          <button
+            onclick="requestClearAllData()"
+            class="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-[11px] transition"
+          >
+            Kosongkan Database
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===================================================================== -->
+  <!-- BOTTOM NAVIGATION BAR (3 TAB ANDROID STYLE)                           -->
+  <!-- ===================================================================== -->
+  <nav class="fixed bottom-0 inset-x-0 z-30 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-4px_16px_rgba(15,23,42,0.06)] pb-safe">
+    <div class="max-w-xl mx-auto grid grid-cols-3">
+      <!-- Tab 1: Data Burung -->
+      <button
+        onclick="switchTab('list')"
+        id="nav-list"
+        class="nav-btn py-2.5 flex flex-col items-center justify-center gap-1 text-emerald-600 font-extrabold transition"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+        </svg>
+        <span class="text-[11px]">Data Burung</span>
+      </button>
+
+      <!-- Tab 2: Tambah / Edit -->
+      <button
+        onclick="openNewFormTab()"
+        id="nav-form"
+        class="nav-btn py-2.5 flex flex-col items-center justify-center gap-1 text-slate-500 font-semibold hover:text-emerald-600 transition"
+      >
+        <div class="w-7 h-7 -mt-1 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.6" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+        </div>
+        <span class="text-[11px]" id="navFormLabel">Tambah Data</span>
+      </button>
+
+      <!-- Tab 3: Google Drive -->
+      <button
+        onclick="switchTab('drive')"
+        id="nav-drive"
+        class="nav-btn py-2.5 flex flex-col items-center justify-center gap-1 text-slate-500 font-semibold hover:text-emerald-600 transition"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+        </svg>
+        <span class="text-[11px]">Google Drive</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL DETAIL BURUNG                                                   -->
+  <!-- ===================================================================== -->
+  <div id="detailModal" class="hidden fixed inset-0 z-50 bg-slate-900/65 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl fade-in">
+      <!-- Header Modal -->
+      <div class="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <span class="font-extrabold text-sm text-slate-800">Detail Genetika & Ring</span>
+        <button onclick="closeDetailModal()" class="p-1.5 rounded-full bg-slate-200/80 hover:bg-slate-300 text-slate-700 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Body Modal (Diisi dinamis oleh JS) -->
+      <div id="detailModalBody" class="p-5 overflow-y-auto space-y-4"></div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL KONFIRMASI CUSTOM (PENGGANTI CONFIRM/ALERT)                     -->
+  <!-- ===================================================================== -->
+  <div id="confirmModal" class="hidden fixed inset-0 z-50 bg-slate-900/65 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-5 shadow-2xl space-y-4 fade-in">
+      <div class="space-y-1.5">
+        <h3 id="confirmTitle" class="font-extrabold text-base text-slate-800">Konfirmasi</h3>
+        <p id="confirmMessage" class="text-xs text-slate-600 leading-relaxed"></p>
+      </div>
+      <div class="flex items-center justify-end gap-2">
+        <button onclick="closeConfirmModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition">
+          Batal
+        </button>
+        <button id="confirmActionBtn" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-xs transition">
+          Ya, Lanjutkan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- TOAST NOTIFIKASI                                                      -->
+  <!-- ===================================================================== -->
+  <div id="toastContainer" class="fixed top-16 inset-x-4 z-50 flex flex-col items-center pointer-events-none space-y-2"></div>
+
+  <!-- Google Identity Services (Opsional untuk OAuth Client ID) -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <!-- ===================================================================== -->
+  <!-- LOGIKA APLIKASI (INDEXEDDB, KOMPRESI FOTO, PWA, GOOGLE DRIVE)         -->
+  <!-- ===================================================================== -->
+  <script>
+    // =========================================================================
+    // 1. KONFIGURASI WARNA RING & VARIABEL STATE
+    // =========================================================================
+    const RING_COLORS = [
+      { name: 'Merah', hex: '#dc2626', text: '#ffffff', border: '#991b1b' },
+      { name: 'Biru', hex: '#2563eb', text: '#ffffff', border: '#1e40af' },
+      { name: 'Hijau', hex: '#16a34a', text: '#ffffff', border: '#166534' },
+      { name: 'Kuning', hex: '#facc15', text: '#1e293b', border: '#ca8a04' },
+      { name: 'Hitam', hex: '#1e293b', text: '#ffffff', border: '#0f172a' },
+      { name: 'Ungu', hex: '#7c3aed', text: '#ffffff', border: '#5b21b6' },
+      { name: 'Oranye', hex: '#f97316', text: '#ffffff', border: '#c2410c' },
+      { name: 'Silver/Polos', hex: '#e2e8f0', text: '#1e293b', border: '#94a3b8' }
+    ];
+
+    const DB_NAME = 'KhoirulTosuroLovebirdDB';
+    const DB_VERSION = 1;
+    const STORE_NAME = 'lovebirds';
+
+    let dbInstance = null;
+    let allBirds = [];
+    let currentFilter = 'Semua';
+    let currentPhotoBase64 = '';
+    let deferredInstallPrompt = null;
+
+    // =========================================================================
+    // 2. INISIALISASI PWA MANIFEST DINAMIS & INSTALL PROMPT
+    // =========================================================================
+    function setupDynamicPWA() {
+      try {
+        const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#059669"/><path d="M256 96c-64 0-112 44-112 104 0 30 12 58 32 78l-68 114 84 36 36 96 60-84 84-36-56-126c20-20 32-48 32-78 0-60-48-104-92-104z" fill="#fde047"/></svg>`;
+        const iconUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(iconSvg);
+        const manifest = {
+          name: 'Khoirul Tosuro - Lovebird Gen Manager',
+          short_name: 'Khoirul Tosuro',
+          start_url: '.',
+          display: 'standalone',
+          background_color: '#f1f5f9',
+          theme_color: '#059669',
+          icons: [
+            { src: iconUrl, sizes: '192x192', type: 'image/svg+xml' },
+            { src: iconUrl, sizes: '512x512', type: 'image/svg+xml' }
+          ]
+        };
+        const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+        const link = document.createElement('link');
+        link.rel = 'manifest';
+        link.href = URL.createObjectURL(blob);
+        document.head.appendChild(link);
+      } catch (e) {
+        console.warn('PWA manifest dinamis dilewati:', e);
+      }
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+    });
+
+    async function triggerInstallPWA() {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        const choice = await deferredInstallPrompt.userChoice;
+        if (choice.outcome === 'accepted') {
+          showToast('Aplikasi Khoirul Tosuro sedang dipasang!', 'success');
+        }
+        deferredInstallPrompt = null;
+      } else {
+        showToast('Buka menu titik tiga (⋮) di Chrome Android lalu pilih "Tambahkan ke Layar Utama".', 'info');
+      }
+    }
+
+    // =========================================================================
+    // 3. DATABASE LOKAL (INDEXEDDB)
+    // =========================================================================
+    function initDatabase() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+        request.onupgradeneeded = (event) => {
+          const db = event.target.result;
+          if (!db.objectStoreNames.contains(STORE_NAME)) {
+            const store = db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+            store.createIndex('visualName', 'visualName', { unique: false });
+            store.createIndex('status', 'status', { unique: false });
+          }
+        };
+
+        request.onsuccess = (event) => {
+          dbInstance = event.target.result;
+          resolve(dbInstance);
+        };
+
+        request.onerror = (event) => {
+          reject(event.target.error);
+        };
+      });
+    }
+
+    function dbGetAllBirds() {
+      return new Promise((resolve, reject) => {
+        const tx = dbInstance.transaction(STORE_NAME, 'readonly');
+        const store = tx.objectStore(STORE_NAME);
+        const req = store.getAll();
+        req.onsuccess = () => resolve(req.result || []);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    function dbSaveBird(birdObj) {
+      return new Promise((resolve, reject) => {
+        const tx = dbInstance.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        const req = store.put(birdObj);
+        req.onsuccess = () => resolve(true);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    function dbDeleteBird(id) {
+      return new Promise((resolve, reject) => {
+        const tx = dbInstance.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        const req = store.delete(id);
+        req.onsuccess = () => resolve(true);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    function dbClearAll() {
+      return new Promise((resolve, reject) => {
+        const tx = dbInstance.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        const req = store.clear();
+        req.onsuccess = () => resolve(true);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    // =========================================================================
+    // 4. DATA CONTOH AWAL (SEED DATA)
+    // =========================================================================
+    function createPlaceholderBirdSvg(label, bg1, bg2) {
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+        <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${bg1}"/><stop offset="100%" stop-color="${bg2}"/></linearGradient></defs>
+        <rect width="400" height="300" fill="url(#g)"/>
+        <circle cx="200" cy="125" r="54" fill="rgba(255,255,255,0.2)"/>
+        <path d="M200 84c-24 0-42 17-42 40 0 11 5 22 12 30l-25 43 32 14 14 36 22-32 32-14-21-47c7-8 12-19 12-30 0-23-18-40-36-40z" fill="#ffffff"/>
+        <text x="200" y="272" text-anchor="middle" font-family="sans-serif" font-weight="bold" font-size="16" fill="#ffffff">${label}</text>
+      </svg>`;
+      return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    }
+
+    async function loadSampleData(forceUserAction = false) {
+      const samples = [
+        {
+          id: 'lb-sample-01',
+          visualName: 'Biola Blue Split Parblue',
+          photo: createPlaceholderBirdSvg('Biola Blue • Ring KT 001', '#0284c7', '#1d4ed8'),
+          sireInfo: 'Biola Green Split Blue (Ring KT-A1)',
+          damInfo: 'Parblue Euwing (Ring KT-B2)',
+          ringNumber: 'KT 001 / 2026',
+          ringColor: 'Biru',
+          status: 'Siap Jual',
+          soldOutDate: '',
+          buyerPhone: '',
+          updatedAt: new Date().toISOString()
+        },
+        {
+          id: 'lb-sample-02',
+          visualName: 'Lutino Mata Merah (MM)',
+          photo: createPlaceholderBirdSvg('Lutino MM • Ring KT 002', '#eab308', '#ea580c'),
+          sireInfo: 'Lutino MM (Ring KT-A3)',
+          damInfo: 'Albino MM (Ring KT-B4)',
+          ringNumber: 'KT 002 / 2026',
+          ringColor: 'Merah',
+          status: 'Sold Out',
+          soldOutDate: new Date().toISOString().split('T')[0],
+          buyerPhone: '081234567890',
+          updatedAt: new Date().toISOString()
+        }
+      ];
+
+      for (const item of samples) {
+        await dbSaveBird(item);
+      }
+      await refreshAppState();
+      if (forceUserAction) {
+        showToast('2 data contoh berhasil dimuat!', 'success');
+      }
+    }
+
+    // =========================================================================
+    // 5. NAVIGASI TAB & RENDER UI
+    // =========================================================================
+    function switchTab(tabName) {
+      const tabs = ['list', 'form', 'drive'];
+      tabs.forEach((t) => {
+        const section = document.getElementById(`tab-${t}`);
+        const navBtn = document.getElementById(`nav-${t}`);
+        if (t === tabName) {
+          section.classList.remove('hidden');
+          navBtn.classList.remove('text-slate-500', 'font-semibold');
+          navBtn.classList.add('text-emerald-600', 'font-extrabold');
+        } else {
+          section.classList.add('hidden');
+          navBtn.classList.remove('text-emerald-600', 'font-extrabold');
+          navBtn.classList.add('text-slate-500', 'font-semibold');
+        }
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function openNewFormTab() {
+      resetFormToNew();
+      switchTab('form');
+    }
+
+    function setStatusFilter(status) {
+      currentFilter = status;
+      document.querySelectorAll('.filter-chip').forEach((btn) => {
+        if (btn.dataset.filter === status) {
+          btn.className = 'filter-chip active px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap bg-emerald-600 text-white shadow-xs transition';
+        } else {
+          btn.className = 'filter-chip px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition';
+        }
+      });
+      renderBirdList();
+    }
+
+    function clearSearch() {
+      const input = document.getElementById('searchInput');
+      input.value = '';
+      renderBirdList();
+    }
+
+    function getRingColorConfig(colorName) {
+      return RING_COLORS.find((c) => c.name === colorName) || RING_COLORS[0];
+    }
+
+    function getStatusBadgeHtml(status) {
+      switch (status) {
+        case 'Indukan':
+          return '<span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-100 text-indigo-700 border border-indigo-200">Indukan</span>';
+        case 'Siap Jual':
+          return '<span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-700 border border-emerald-200">Siap Jual</span>';
+        case 'Sold Out':
+          return '<span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-100 text-rose-700 border border-rose-200">Sold Out</span>';
+        default:
+          return '<span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-800 border border-amber-200">Anakan/Rawatan</span>';
+      }
+    }
+
+    function updateStats() {
+      const total = allBirds.length;
+      const ready = allBirds.filter((b) => b.status === 'Siap Jual' || b.status === 'Anakan/Rawatan').length;
+      const indukan = allBirds.filter((b) => b.status === 'Indukan').length;
+      const sold = allBirds.filter((b) => b.status === 'Sold Out').length;
+
+      document.getElementById('statTotal').textContent = total;
+      document.getElementById('statReady').textContent = ready;
+      document.getElementById('statIndukan').textContent = indukan;
+      document.getElementById('statSold').textContent = sold;
+    }
+
+    function renderBirdList() {
+      const container = document.getElementById('birdListContainer');
+      const emptyState = document.getElementById('emptyState');
+      const query = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+      const clearBtn = document.getElementById('btnClearSearch');
+
+      if (query.length > 0) {
+        clearBtn.classList.remove('hidden');
+        clearBtn.classList.add('flex');
+      } else {
+        clearBtn.classList.add('hidden');
+        clearBtn.classList.remove('flex');
+      }
+
+      const filtered = allBirds.filter((bird) => {
+        const matchStatus = currentFilter === 'Semua' || bird.status === currentFilter;
+        if (!matchStatus) return false;
+        if (!query) return true;
+
+        const haystack = [
+          bird.visualName,
+          bird.ringNumber,
+          bird.ringColor,
+          bird.sireInfo,
+          bird.damInfo,
+          bird.status,
+          bird.buyerPhone
+        ].join(' ').toLowerCase();
+
+        return haystack.includes(query);
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+
+      container.innerHTML = filtered.map((bird) => {
+        const ringObj = getRingColorConfig(bird.ringColor);
+        const thumbSrc = bird.photo || createPlaceholderBirdSvg(bird.visualName, '#10b981', '#0f766e');
+        const waUrl = bird.status === 'Sold Out' ? formatWhatsAppLink(bird.buyerPhone, bird) : '';
+
+        return `
+          <article class="bg-white rounded-2xl p-3 shadow-xs border border-slate-200/90 hover:border-emerald-300 transition flex gap-3">
+            <!-- Thumbnail Foto + Badge Warna Ring -->
+            <div onclick="openDetailModal('${bird.id}')" class="cursor-pointer relative w-24 h-24 rounded-xl overflow-hidden bg-slate-100 shrink-0 border border-slate-200">
+              <img src="${thumbSrc}" alt="${escapeHTML(bird.visualName)}" class="w-full h-full object-cover" />
+              <span
+                style="background-color:${ringObj.hex}; color:${ringObj.text}; border-color:${ringObj.border};"
+                class="absolute bottom-1 left-1 px-1.5 py-0.5 rounded-md text-[9px] font-extrabold border shadow-xs"
+              >
+                ${escapeHTML(bird.ringColor)}
+              </span>
+            </div>
+
+            <!-- Informasi Utama Burung -->
+            <div class="flex-1 min-w-0 flex flex-col justify-between">
+              <div onclick="openDetailModal('${bird.id}')" class="cursor-pointer">
+                <div class="flex items-start justify-between gap-1.5">
+                  <h3 class="font-extrabold text-sm text-slate-800 truncate leading-snug">${escapeHTML(bird.visualName)}</h3>
+                  ${getStatusBadgeHtml(bird.status)}
+                </div>
+
+                <!-- Nomor Ring -->
+                <div class="mt-1 flex items-center gap-1.5 text-[11px] font-mono font-bold text-slate-600">
+                  <span class="w-2.5 h-2.5 rounded-full shrink-0 border" style="background-color:${ringObj.hex}; border-color:${ringObj.border};"></span>
+                  <span class="truncate">Ring: ${escapeHTML(bird.ringNumber || 'Tanpa Ring')}</span>
+                </div>
+
+                <!-- Ringkasan Indukan -->
+                <div class="mt-1.5 space-y-0.5 text-[11px] text-slate-500">
+                  <div class="truncate"><span class="font-bold text-sky-600">♂</span> ${escapeHTML(bird.sireInfo || '-')}</div>
+                  <div class="truncate"><span class="font-bold text-pink-600">♀</span> ${escapeHTML(bird.damInfo || '-')}</div>
+                </div>
+              </div>
+
+              <!-- Bar Tombol Aksi Cepat -->
+              <div class="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between gap-1.5">
+                <div class="flex items-center gap-1.5">
+                  <button
+                    onclick="openDetailModal('${bird.id}')"
+                    class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] transition"
+                  >
+                    Detail
+                  </button>
+                  <button
+                    onclick="editBird('${bird.id}')"
+                    class="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-[11px] transition"
+                  >
+                    Edit
+                  </button>
+                </div>
+
+                ${waUrl ? `
+                  <a
+                    href="${waUrl}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="px-2.5 py-1 rounded-lg bg-green-600 hover:bg-green-700 text-white font-bold text-[11px] inline-flex items-center gap-1 shadow-xs transition"
+                  >
+                    <span>Chat WA</span>
+                  </a>
+                ` : ''}
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    async function refreshAppState() {
+      allBirds = await dbGetAllBirds();
+      allBirds.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
+      updateStats();
+      renderBirdList();
+    }
+
+    // =========================================================================
+    // 6. FORM INPUT, WARNA RING, & KOMPRESI FOTO OTOMATIS
+    // =========================================================================
+    function renderRingColorPalette(selectedColor = 'Merah') {
+      const container = document.getElementById('ringColorPalette');
+      document.getElementById('ringColor').value = selectedColor;
+
+      container.innerHTML = RING_COLORS.map((c) => {
+        const isSelected = c.name === selectedColor;
+        return `
+          <button
+            type="button"
+            onclick="selectRingColor('${c.name}')"
+            class="flex items-center gap-1.5 px-2 py-2 rounded-xl border text-left text-[11px] font-bold transition ${
+              isSelected
+                ? 'border-emerald-600 bg-emerald-50 text-emerald-900 ring-2 ring-emerald-500/30'
+                : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+            }"
+          >
+            <span class="w-3.5 h-3.5 rounded-full shrink-0 border" style="background-color:${c.hex}; border-color:${c.border};"></span>
+            <span class="truncate">${c.name}</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function selectRingColor(colorName) {
+      renderRingColorPalette(colorName);
+    }
+
+    function toggleSoldOutFields() {
+      const status = document.getElementById('status').value;
+      const box = document.getElementById('soldOutFields');
+      if (status === 'Sold Out') {
+        box.classList.remove('hidden');
+        const dateInput = document.getElementById('soldOutDate');
+        if (!dateInput.value) {
+          dateInput.value = new Date().toISOString().split('T')[0];
+        }
+      } else {
+        box.classList.add('hidden');
+      }
+    }
+
+    function handlePhotoUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          // Kompresi gambar ke lebar maksimal 720px (kualitas JPEG 0.72) agar ringan di IndexedDB & Drive
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 720;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > MAX_WIDTH) {
+            height = Math.round((height * MAX_WIDTH) / width);
+            width = MAX_WIDTH;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          currentPhotoBase64 = canvas.toDataURL('image/jpeg', 0.72);
+          document.getElementById('photoPreviewImg').src = currentPhotoBase64;
+          document.getElementById('photoPreviewWrapper').classList.remove('hidden');
+          showToast('Foto berhasil dikompresi & siap disimpan', 'success');
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeSelectedPhoto() {
+      currentPhotoBase64 = '';
+      document.getElementById('photoPreviewImg').src = '';
+      document.getElementById('photoPreviewWrapper').classList.add('hidden');
+    }
+
+    function resetFormToNew() {
+      document.getElementById('birdForm').reset();
+      document.getElementById('birdId').value = '';
+      document.getElementById('formHeading').textContent = 'Tambah Data Lovebird';
+      document.getElementById('navFormLabel').textContent = 'Tambah Data';
+      removeSelectedPhoto();
+      renderRingColorPalette('Merah');
+      toggleSoldOutFields();
+    }
+
+    function editBird(id) {
+      const bird = allBirds.find((b) => b.id === id);
+      if (!bird) return;
+
+      closeDetailModal();
+      document.getElementById('birdId').value = bird.id;
+      document.getElementById('visualName').value = bird.visualName || '';
+      document.getElementById('sireInfo').value = bird.sireInfo || '';
+      document.getElementById('damInfo').value = bird.damInfo || '';
+      document.getElementById('ringNumber').value = bird.ringNumber || '';
+      document.getElementById('status').value = bird.status || 'Anakan/Rawatan';
+      document.getElementById('soldOutDate').value = bird.soldOutDate || '';
+      document.getElementById('buyerPhone').value = bird.buyerPhone || '';
+
+      renderRingColorPalette(bird.ringColor || 'Merah');
+      toggleSoldOutFields();
+
+      if (bird.photo) {
+        currentPhotoBase64 = bird.photo;
+        document.getElementById('photoPreviewImg').src = bird.photo;
+        document.getElementById('photoPreviewWrapper').classList.remove('hidden');
+      } else {
+        removeSelectedPhoto();
+      }
+
+      document.getElementById('formHeading').textContent = 'Edit Data Lovebird';
+      document.getElementById('navFormLabel').textContent = 'Edit Data';
+      switchTab('form');
+    }
+
+    async function handleFormSubmit(event) {
+      event.preventDefault();
+
+      const id = document.getElementById('birdId').value || 'lb-' + Date.now();
+      const visualName = document.getElementById('visualName').value.trim();
+      const sireInfo = document.getElementById('sireInfo').value.trim();
+      const damInfo = document.getElementById('damInfo').value.trim();
+      const ringNumber = document.getElementById('ringNumber').value.trim().toUpperCase();
+      const ringColor = document.getElementById('ringColor').value || 'Merah';
+      const status = document.getElementById('status').value;
+      const soldOutDate = status === 'Sold Out' ? document.getElementById('soldOutDate').value : '';
+      const buyerPhone = status === 'Sold Out' ? document.getElementById('buyerPhone').value.trim() : '';
+
+      if (!visualName) {
+        showToast('Nama Visual wajib diisi!', 'error');
+        return;
+      }
+
+      const record = {
+        id,
+        visualName,
+        photo: currentPhotoBase64,
+        sireInfo,
+        damInfo,
+        ringNumber,
+        ringColor,
+        status,
+        soldOutDate,
+        buyerPhone,
+        updatedAt: new Date().toISOString()
+      };
+
+      try {
+        await dbSaveBird(record);
+        await refreshAppState();
+        resetFormToNew();
+        switchTab('list');
+        showToast('Data Lovebird berhasil disimpan!', 'success');
+      } catch (err) {
+        console.error(err);
+        showToast('Gagal menyimpan data ke database lokal.', 'error');
+      }
+    }
+
+    // =========================================================================
+    // 7. MODAL DETAIL BURUNG & INTEGRASI WHATSAPP
+    // =========================================================================
+    function formatWhatsAppLink(phone, bird) {
+      if (!phone) return '';
+      let cleaned = phone.replace(/\D/g, '');
+      if (!cleaned) return '';
+      if (cleaned.startsWith('0')) cleaned = '62' + cleaned.slice(1);
+      const text = encodeURIComponent(
+        `Halo Kak, konfirmasi data Lovebird *${bird.visualName}* (No. Ring: ${bird.ringNumber || '-'} - Warna ${bird.ringColor}) dari *Khoirul Tosuro*.`
+      );
+      return `https://wa.me/${cleaned}?text=${text}`;
+    }
+
+    function openDetailModal(id) {
+      const bird = allBirds.find((b) => b.id === id);
+      if (!bird) return;
+
+      const ringObj = getRingColorConfig(bird.ringColor);
+      const photoSrc = bird.photo || createPlaceholderBirdSvg(bird.visualName, '#059669', '#0d9488');
+      const waUrl = bird.status === 'Sold Out' ? formatWhatsAppLink(bird.buyerPhone, bird) : '';
+
+      const body = document.getElementById('detailModalBody');
+      body.innerHTML = `
+        <div class="rounded-2xl overflow-hidden border border-slate-200 bg-slate-100">
+          <img src="${photoSrc}" alt="${escapeHTML(bird.visualName)}" class="w-full max-h-64 object-cover" />
+        </div>
+
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <h3 class="font-extrabold text-lg text-slate-900 leading-tight">${escapeHTML(bird.visualName)}</h3>
+            <p class="text-[11px] text-slate-400 mt-0.5">Diperbarui: ${formatDateIndo(bird.updatedAt)}</p>
+          </div>
+          ${getStatusBadgeHtml(bird.status)}
+        </div>
+
+        <!-- Nomor & Warna Ring -->
+        <div class="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-200">
+          <div
+            class="w-11 h-11 rounded-xl flex items-center justify-center font-extrabold text-xs border shadow-xs shrink-0"
+            style="background-color:${ringObj.hex}; color:${ringObj.text}; border-color:${ringObj.border};"
+          >
+            RING
+          </div>
+          <div>
+            <div class="text-[11px] text-slate-500">Nomor & Warna Ring</div>
+            <div class="font-mono font-extrabold text-sm text-slate-800">
+              ${escapeHTML(bird.ringNumber || 'Tanpa Ring')} &bull; Warna ${escapeHTML(bird.ringColor)}
+            </div>
+          </div>
+        </div>
+
+        <!-- Silsilah Indukan -->
+        <div class="p-3.5 rounded-2xl bg-indigo-50/70 border border-indigo-100 space-y-2">
+          <div class="text-xs font-extrabold text-indigo-900">Silsilah & Gen Indukan</div>
+          <div class="text-xs text-slate-700">
+            <span class="font-bold text-sky-700">Indukan Jantan (♂):</span><br/>
+            <span>${escapeHTML(bird.sireInfo || 'Belum diisi')}</span>
+          </div>
+          <div class="text-xs text-slate-700 pt-1 border-t border-indigo-100">
+            <span class="font-bold text-pink-700">Indukan Betina (♀):</span><br/>
+            <span>${escapeHTML(bird.damInfo || 'Belum diisi')}</span>
+          </div>
+        </div>
+
+        <!-- Info Transaksi Jika Sold Out -->
+        ${bird.status === 'Sold Out' ? `
+          <div class="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 space-y-2.5">
+            <div class="text-xs font-extrabold text-rose-800">Informasi Transaksi Sold Out</div>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div>
+                <div class="text-slate-500 text-[11px]">Tanggal Sold Out</div>
+                <div class="font-bold text-slate-800">${escapeHTML(bird.soldOutDate || '-')}</div>
+              </div>
+              <div>
+                <div class="text-slate-500 text-[11px]">No. HP Pembeli</div>
+                <div class="font-mono font-bold text-slate-800">${escapeHTML(bird.buyerPhone || '-')}</div>
+              </div>
+            </div>
+            ${waUrl ? `
+              <a
+                href="${waUrl}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="w-full py-2.5 px-4 rounded-xl bg-green-600 hover:bg-green-700 text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow-xs transition"
+              >
+                <span>Hubungi Pembeli via WhatsApp</span>
+              </a>
+            ` : ''}
+          </div>
+        ` : ''}
+
+        <!-- Tombol Edit & Hapus -->
+        <div class="pt-2 flex items-center gap-2">
+          <button
+            onclick="requestDeleteBird('${bird.id}', '${escapeHTML(bird.visualName)}')"
+            class="w-1/3 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs transition"
+          >
+            Hapus
+          </button>
+          <button
+            onclick="editBird('${bird.id}')"
+            class="w-2/3 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-xs transition"
+          >
+            Edit Data Burung
+          </button>
+        </div>
+      `;
+
+      document.getElementById('detailModal').classList.remove('hidden');
+    }
+
+    function closeDetailModal() {
+      document.getElementById('detailModal').classList.add('hidden');
+    }
+
+    function requestDeleteBird(id, name) {
+      openConfirmModal(
+        'Hapus Data Burung?',
+        `Data "${name}" akan dihapus permanen dari penyimpanan HP ini.`,
+        async () => {
+          await dbDeleteBird(id);
+          closeDetailModal();
+          await refreshAppState();
+          showToast('Data burung telah dihapus.', 'success');
+        }
+      );
+    }
+
+    function requestClearAllData() {
+      openConfirmModal(
+        'Kosongkan Semua Data?',
+        'Seluruh data Lovebird di HP ini akan dihapus. Pastikan Anda sudah membuat backup ke Google Drive terlebih dahulu.',
+        async () => {
+          await dbClearAll();
+          await refreshAppState();
+          showToast('Database lokal berhasil dikosongkan.', 'info');
+        }
+      );
+    }
+
+    // =========================================================================
+    // 8. BACKUP, RESTORE, & SINKRONISASI GOOGLE DRIVE
+    // =========================================================================
+    function updateLastBackupDisplay() {
+      const saved = localStorage.getItem('kt_last_backup');
+      document.getElementById('lastBackupText').textContent = saved || 'Belum pernah backup';
+      const savedClientId = localStorage.getItem('kt_google_client_id') || '';
+      document.getElementById('googleClientIdInput').value = savedClientId;
+    }
+
+    function buildBackupPayload() {
+      return {
+        app: 'Khoirul Tosuro',
+        version: '1.0',
+        exportedAt: new Date().toISOString(),
+        totalRecords: allBirds.length,
+        records: allBirds
+      };
+    }
+
+    async function exportAndShareBackup() {
+      try {
+        const payload = buildBackupPayload();
+        const jsonStr = JSON.stringify(payload, null, 2);
+        const dateStr = new Date().toISOString().split('T')[0];
+        const fileName = `khoirul_tosuro_backup_${dateStr}.json`;
+        const file = new File([jsonStr], fileName, { type: 'application/json' });
+
+        // Catat waktu backup
+        const timeNow = new Date().toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
+        localStorage.setItem('kt_last_backup', timeNow);
+        updateLastBackupDisplay();
+
+        // Gunakan Android Web Share API jika mendukung share file (bisa langsung pilih Google Drive)
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            title: 'Backup Database Khoirul Tosuro',
+            text: 'Simpan file backup database Lovebird ke Google Drive.',
+            files: [file]
+          });
+          showToast('Silakan pilih "Simpan ke Drive" pada menu berbagi Android.', 'success');
+          return;
+        }
+
+        // Fallback download file JSON standar
+        const url = URL.createObjectURL(file);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast(`File ${fileName} berhasil diunduh!`, 'success');
+      } catch (err) {
+        if (err && err.name !== 'AbortError') {
+          console.error(err);
+          showToast('Gagal mengekspor file backup.', 'error');
+        }
+      }
+    }
+
+    function handleImportBackup(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      const mode = document.getElementById('restoreMode').value;
+      const reader = new FileReader();
+
+      reader.onload = async (e) => {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          const records = Array.isArray(parsed) ? parsed : parsed.records;
+
+          if (!Array.isArray(records)) {
+            showToast('Format file backup tidak valid!', 'error');
+            return;
+          }
+
+          if (mode === 'replace') {
+            await dbClearAll();
+          }
+
+          for (const item of records) {
+            if (item && item.visualName) {
+              if (!item.id) item.id = 'lb-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6);
+              await dbSaveBird(item);
+            }
+          }
+
+          await refreshAppState();
+          switchTab('list');
+          showToast(`Berhasil memulihkan ${records.length} data Lovebird!`, 'success');
+        } catch (err) {
+          console.error(err);
+          showToast('File JSON rusak atau tidak dapat dibaca.', 'error');
+        } finally {
+          event.target.value = '';
+        }
+      };
+
+      reader.readAsText(file);
+    }
+
+    function saveGoogleClientId() {
+      const val = document.getElementById('googleClientIdInput').value.trim();
+      localStorage.setItem('kt_google_client_id', val);
+      showToast(val ? 'Google Client ID berhasil disimpan!' : 'Google Client ID dikosongkan.', 'success');
+    }
+
+    function syncDirectGoogleDrive() {
+      const clientId = localStorage.getItem('kt_google_client_id');
+      if (!clientId) {
+        showToast('Masukkan & simpan Google OAuth Client ID terlebih dahulu, atau gunakan tombol Export di atas.', 'info');
+        return;
+      }
+
+      if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
+        showToast('Layanan Google OAuth belum siap. Pastikan koneksi internet aktif.', 'error');
+        return;
+      }
+
+      const tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: clientId,
+        scope: 'https://www.googleapis.com/auth/drive.file',
+        callback: async (tokenResponse) => {
+          if (tokenResponse && tokenResponse.access_token) {
+            await uploadJsonToDriveAPI(tokenResponse.access_token);
+          } else {
+            showToast('Login Google dibatalkan atau gagal.', 'error');
+          }
+        }
+      });
+
+      tokenClient.requestAccessToken({ prompt: 'consent' });
+    }
+
+    async function uploadJsonToDriveAPI(accessToken) {
+      try {
+        showToast('Mengunggah database ke Google Drive...', 'info');
+        const payload = buildBackupPayload();
+        const metadata = {
+          name: 'khoirul_tosuro_backup.json',
+          mimeType: 'application/json'
+        };
+
+        const form = new FormData();
+        form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+        form.append('file', new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }));
+
+        const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+          method: 'POST',
+          headers: { Authorization: 'Bearer ' + accessToken },
+          body: form
+        });
+
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+
+        const timeNow = new Date().toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
+        localStorage.setItem('kt_last_backup', timeNow + ' (Drive API)');
+        updateLastBackupDisplay();
+        showToast('Berhasil sinkronisasi ke Google Drive!', 'success');
+      } catch (err) {
+        console.error(err);
+        showToast('Gagal mengunggah ke Google Drive API. Periksa konfigurasi Client ID.', 'error');
+      }
+    }
+
+    // =========================================================================
+    // 9. UTILITAS (CONFIRM MODAL, TOAST, ESCAPE HTML)
+    // =========================================================================
+    function openConfirmModal(title, message, onConfirm) {
+      document.getElementById('confirmTitle').textContent = title;
+      document.getElementById('confirmMessage').textContent = message;
+      const btn = document.getElementById('confirmActionBtn');
+      btn.onclick = async () => {
+        closeConfirmModal();
+        await onConfirm();
+      };
+      document.getElementById('confirmModal').classList.remove('hidden');
+    }
+
+    function closeConfirmModal() {
+      document.getElementById('confirmModal').classList.add('hidden');
+    }
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+
+      const colorMap = {
+        success: 'bg-emerald-800 text-white border-emerald-600',
+        error: 'bg-rose-800 text-white border-rose-600',
+        info: 'bg-slate-800 text-white border-slate-600'
+      };
+
+      toast.className = `px-4 py-2.5 rounded-2xl text-xs font-bold shadow-lg border max-w-sm text-center fade-in ${colorMap[type] || colorMap.info}`;
+      toast.textContent = message;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.25s ease';
+        setTimeout(() => toast.remove(), 260);
+      }, 2800);
+    }
+
+    function escapeHTML(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function formatDateIndo(isoStr) {
+      if (!isoStr) return '-';
+      try {
+        return new Date(isoStr).toLocaleDateString('id-ID', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric'
+        });
+      } catch {
+        return isoStr;
+      }
+    }
+
+    // =========================================================================
+    // 10. JALANKAN SAAT HALAMAN SELESAI DIMUAT
+    // =========================================================================
+    window.addEventListener('DOMContentLoaded', async () => {
+      setupDynamicPWA();
+      renderRingColorPalette('Merah');
+      updateLastBackupDisplay();
+
+      try {
+        await initDatabase();
+        const existing = await dbGetAllBirds();
+        const isSeeded = localStorage.getItem('kt_initial_seeded');
+
+        if (existing.length === 0 && !isSeeded) {
+          localStorage.setItem('kt_initial_seeded', '1');
+          await loadSampleData(false);
+        } else {
+          await refreshAppState();
+        }
+      } catch (err) {
+        console.error('Database error:', err);
+        document.getElementById('dbStatusBadge').textContent = 'DB Error';
+        showToast('Gagal membuka database lokal browser.', 'error');
+      }
+    });
+  </script>
+</body>
+</html>
